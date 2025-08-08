@@ -7,7 +7,7 @@ import requests
 app = Flask(__name__)
 
 # === CẤU HÌNH WEBHOOK INCOMING ===
-INCOMING_WEBHOOK_URL = "https://chat.rakus.co.jp/hooks/your-incoming-webhook-id"  # ← Thay bằng webhook thật
+INCOMING_WEBHOOK_URL = "https://mattermost01.ssl.mdomain/hooks/yk9m43a7ypyfmm4acu6h47wkie"  # ← Thay bằng webhook thật
 
 # === LOG HTML (TÙY CHỌN) ===
 HTML_LOG = "translated_log.html"
