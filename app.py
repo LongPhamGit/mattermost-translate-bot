@@ -2,11 +2,14 @@ from flask import Flask, request
 from deep_translator import GoogleTranslator
 from datetime import datetime
 import os
-import platform
-import subprocess
+import requests
 
 app = Flask(__name__)
 
+# === CẤU HÌNH WEBHOOK INCOMING ===
+INCOMING_WEBHOOK_URL = "https://chat.rakus.co.jp/hooks/your-incoming-webhook-id"  # ← Thay bằng webhook thật
+
+# === LOG HTML (TÙY CHỌN) ===
 HTML_LOG = "translated_log.html"
 
 def init_html_file():
@@ -16,64 +19,72 @@ def init_html_file():
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Translated Messages Log</title>
+    <title>Translated Logs</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
-        .entry { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .timestamp { font-size: 12px; color: #888; }
-        .user-channel { font-weight: bold; }
-        .original { color: #333; margin-top: 10px; }
-        .translated { color: green; margin-top: 10px; font-weight: bold; }
+        body { font-family: sans-serif; background: #f5f5f5; padding: 20px; }
+        .entry { background: white; padding: 10px; margin-bottom: 10px; border-left: 5px solid #4caf50; }
+        .timestamp { font-size: 12px; color: #999; }
+        .original { margin-top: 10px; }
+        .translated { color: green; margin-top: 5px; }
     </style>
 </head>
 <body>
-    <h1>📘 Dịch tin nhắn Mattermost</h1>
+<h2>📘 Lịch sử bản dịch</h2>
 """)
 
-def append_log_to_html(original, translated, user, channel):
+def append_log_to_html(original, translated, sender, channel):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    html_entry = f"""
-    <div class="entry">
-        <div class="timestamp">🕒 {timestamp}</div>
-        <div class="user-channel">👤 @{user} tại #{channel}</div>
-        <div class="original">💬 <strong>Gốc:</strong> {original}</div>
-        <div class="translated">🈶 <strong>Dịch:</strong> {translated}</div>
-    </div>
-    """
-
+    html = f"""<div class="entry">
+<div class="timestamp">🕒 {timestamp}</div>
+<b>👤 @{sender}</b> tại <code>#{channel}</code>
+<div class="original">💬 <b>Gốc:</b> {original}</div>
+<div class="translated">🈶 <b>Dịch:</b> {translated}</div>
+</div>
+"""
     with open(HTML_LOG, "a", encoding="utf-8") as f:
-        f.write(html_entry)
+        f.write(html)
 
-    open_log_file()
+# === GỬI VỀ WEBHOOK ===
+def send_to_webhook(original, translated, sender, channel_name):
+    message = f"""📩 **Mention từ @{sender} tại `#{channel_name}`**
+> {original}
 
-def open_log_file():
-    abs_path = os.path.abspath(HTML_LOG)
+🈶 **Dịch:** {translated}"""
+    payload = {
+        "username": "TranslateBot",
+        "text": message,
+        "icon_emoji": "🈶"
+    }
     try:
-        if platform.system() == "Windows":
-            os.startfile(abs_path)
-        elif platform.system() == "Darwin":
-            subprocess.call(["open", abs_path])
-        else:
-            subprocess.call(["xdg-open", abs_path])
+        requests.post(INCOMING_WEBHOOK_URL, json=payload)
     except Exception as e:
-        print(f"Lỗi mở file HTML: {e}")
+        print(f"❌ Lỗi gửi webhook: {e}")
 
+# === ENDPOINT XỬ LÝ ===
 @app.route('/translate', methods=['POST'])
 def translate():
     text = request.form.get('text')
     user = request.form.get('user_name')
     channel = request.form.get('channel_name')
 
+    if not text:
+        return "No text", 200
+
     if "@pnblong" not in text and "@channel" not in text and "@all" not in text:
-        return "Không có mention phù hợp", 200
+        return "Không chứa mention hợp lệ", 200
 
     try:
         translated = GoogleTranslator(source='auto', target='vi').translate(text)
+
+        # Lưu log
         append_log_to_html(text, translated, user, channel)
-        return "✅ Đã dịch và mở HTML", 200
+
+        # Gửi về webhook
+        send_to_webhook(text, translated, user, channel)
+
+        return "✅ Đã dịch và gửi vào channel", 200
     except Exception as e:
-        return f"❌ Lỗi dịch: {e}", 500
+        return f"❌ Lỗi xử lý: {e}", 500
 
 if __name__ == '__main__':
     init_html_file()
