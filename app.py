@@ -33,7 +33,7 @@ def append_log_to_html(original, translated, sender, channel):
 <div class="timestamp">🕒 {timestamp}</div>
 <b>👤 @{sender}</b> tại <code>#{channel}</code>
 <div class="original">💬 <b>Gốc:</b> {original}</div>
-<div class="translated">🈶 <b>Dịch:</b> {translated}</div>
+<div class="translated">> <b>Dịch:</b> {translated}</div>
 </div>
 """
     with open(HTML_LOG, "a", encoding="utf-8") as f:
