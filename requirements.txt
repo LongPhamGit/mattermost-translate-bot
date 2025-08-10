@@ -1,2 +1,3 @@
 flask
-deep-translator
+flask-socketio
+eventlet
