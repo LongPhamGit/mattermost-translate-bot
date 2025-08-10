@@ -1,2 +1,3 @@
-flask
-deep-translator
+Flask
+Flask-SocketIO
+eventlet

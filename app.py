@@ -1,9 +1,14 @@
 from flask import Flask, request, jsonify
 from flask_socketio import SocketIO
 import uuid
+import os
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
+
+@app.route("/")
+def home():
+    return "✅ Mattermost Translate Bot WebSocket Server is running"
 
 @app.route("/translate", methods=["POST"])
 def translate():
@@ -11,17 +16,21 @@ def translate():
     user = request.form.get("user_name", "")
     channel = request.form.get("channel_name", "")
 
-    # Ví dụ: dịch đơn giản (thay thế thành code dịch thật)
+    if not text:
+        return jsonify({"error": "No text provided"}), 400
+
+    # Thay bằng code dịch thật (GoogleTranslator...) nếu muốn
     translated = f"[VI] {text}"
 
     message = {
         "id": str(uuid.uuid4()),
         "user": user,
         "channel": channel,
-        "text": translated
+        "original": text,
+        "translated": translated
     }
 
-    # Phát sự kiện WebSocket
+    # Gửi tin nhắn mới tới tất cả client WebSocket
     socketio.emit("new_message", message)
 
     return jsonify({
@@ -30,4 +39,5 @@ def translate():
     })
 
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    socketio.run(app, host="0.0.0.0", port=port, debug=False)
