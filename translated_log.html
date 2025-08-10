@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Translated Logs</title>
+</head>
+<body>
+<h1>Translated Messages</h1>
+<ul id="log-list"></ul>
+<script>
+fetch('/logs')
+.then(res => res.json())
+.then(data => {
+    const ul = document.getElementById('log-list');
+    data.forEach(msg => {
+        const li = document.createElement('li');
+        li.textContent = `[${msg.channel}] ${msg.user}: ${msg.text}`;
+        ul.appendChild(li);
+    });
+});
+</script>
+</body>
+</html>
