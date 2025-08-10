@@ -1,84 +1,76 @@
-from flask import Flask, request, jsonify, send_from_directory
-from flask_socketio import SocketIO, emit
-import json
+from flask import Flask, request
+from deep_translator import GoogleTranslator
+from datetime import datetime
 import os
-import uuid
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "secret!"
-socketio = SocketIO(app, cors_allowed_origins="*")
 
-TOKENS_FILE = "tokens.json"
-LOG_FILE = "translated_log.json"
-REG_CODE = os.environ.get("REG_CODE", "myregcode123")  # mã đăng ký extension
-API_TOKEN = os.environ.get("API_TOKEN", None)  # legacy token
+HTML_LOG = "translated_log.html"
 
-# Load tokens
-if os.path.exists(TOKENS_FILE):
-    with open(TOKENS_FILE, "r") as f:
-        TOKENS = json.load(f)
-else:
-    TOKENS = {}
+def init_html_file():
+    if not os.path.exists(HTML_LOG):
+        with open(HTML_LOG, "w", encoding="utf-8") as f:
+            f.write("""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Translated Logs</title>
+    <style>
+        body { font-family: sans-serif; background: #f5f5f5; padding: 20px; }
+        .entry { background: white; padding: 10px; margin-bottom: 10px; border-left: 5px solid #4caf50; }
+        .timestamp { font-size: 12px; color: #999; }
+        .original { margin-top: 10px; }
+        .translated { color: green; margin-top: 5px; }
+    </style>
+</head>
+<body>
+<h2>📘 Lịch sử bản dịch</h2>
+""")
 
-# Load logs
-if os.path.exists(LOG_FILE):
-    with open(LOG_FILE, "r") as f:
-        MESSAGES = json.load(f)
-else:
-    MESSAGES = []
+def append_log_to_html(original, translated, sender, channel):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    html = f"""<div class="entry">
+<div class="timestamp">🕒 {timestamp}</div>
+<b>👤 @{sender}</b> tại <code>#{channel}</code>
+<div class="original">💬 <b>Gốc:</b> {original}</div>
+<div class="translated">> <b>Dịch:</b> {translated}</div>
+</div>
+"""
+    with open(HTML_LOG, "a", encoding="utf-8") as f:
+        f.write(html)
 
-def save_tokens():
-    with open(TOKENS_FILE, "w") as f:
-        json.dump(TOKENS, f)
-
-def save_messages():
-    with open(LOG_FILE, "w") as f:
-        json.dump(MESSAGES, f)
-
-@app.route("/register", methods=["POST"])
-def register():
-    data = request.json
-    reg_code = data.get("reg_code")
-    if reg_code != REG_CODE:
-        return jsonify({"error": "Invalid registration code"}), 403
-    token = str(uuid.uuid4())
-    TOKENS[token] = {"created": True}
-    save_tokens()
-    return jsonify({"token": token})
-
-@app.route("/translate", methods=["POST"])
+@app.route('/translate', methods=['POST'])
 def translate():
-    token = request.headers.get("Authorization")
-    if API_TOKEN and token != f"Bearer {API_TOKEN}":
-        return jsonify({"error": "Unauthorized"}), 401
+    text = request.form.get('text')
+    user = request.form.get('user_name')
+    channel = request.form.get('channel_name')
 
-    text = request.form.get("text", "")
-    user_name = request.form.get("user_name", "")
-    channel_name = request.form.get("channel_name", "")
+    if not text:
+        return "Không có nội dung", 200
 
-    message = {
-        "id": str(uuid.uuid4()),
-        "user": user_name,
-        "channel": channel_name,
-        "text": text,
-    }
-    MESSAGES.append(message)
-    save_messages()
+    if "@pnblong" not in text and "@channel" not in text and "@all" not in text:
+        return "Không chứa mention hợp lệ", 200
 
-    socketio.emit("new_message", message)
-    return jsonify({"status": "ok", "message": message})
+    try:
+        translated = GoogleTranslator(source='auto', target='vi').translate(text)
 
-@app.route("/logs")
-def logs():
-    return jsonify(MESSAGES)
+        append_log_to_html(text, translated, user, channel)
 
-@app.route("/log_page")
-def log_page():
-    return send_from_directory(".", "translated_log.html")
+        # Trả về nội dung bản dịch cho người gửi (Postman hoặc console)
+        message = f"""📩 Mention từ @{user} tại #{channel}:\n> {text}\n\n🈶 Dịch: {translated}"""
+        return message, 200
 
-@socketio.on("connect")
-def handle_connect():
-    print("Client connected")
+    except Exception as e:
+        return f"❌ Lỗi xử lý: {e}", 500
 
-if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=5000)
+@app.route('/logs', methods=['GET'])
+def view_logs():
+    if not os.path.exists(HTML_LOG):
+        return "<h3>Chưa có bản dịch nào.</h3>"
+    with open(HTML_LOG, 'r', encoding='utf-8') as f:
+        return f.read()
+
+if __name__ == '__main__':
+    init_html_file()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
