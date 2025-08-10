@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_socketio import SocketIO
+from deep_translator import GoogleTranslator
 import uuid
 import os
 
@@ -19,8 +20,11 @@ def translate():
     if not text:
         return jsonify({"error": "No text provided"}), 400
 
-    # Thay bằng code dịch thật (GoogleTranslator...) nếu muốn
-    translated = f"[VI] {text}"
+    try:
+        # Dịch tự động sang tiếng Việt
+        translated = GoogleTranslator(source="auto", target="vi").translate(text)
+    except Exception as e:
+        return jsonify({"error": f"Lỗi dịch: {e}"}), 500
 
     message = {
         "id": str(uuid.uuid4()),
