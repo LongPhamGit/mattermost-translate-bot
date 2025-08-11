@@ -10,21 +10,14 @@ from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QTextEdit, QLabe
 from PyQt6.QtGui import QFont, QColor, QTextCharFormat, QTextCursor
 from PyQt6.QtCore import Qt
 
-try:
-    from win10toast_click import ToastNotifier
-    use_win10toast = True
-except ImportError:
-    use_win10toast = False
-    from plyer import notification
-
+# Thay bằng API key Gemini của bạn
 API_KEY = "AIzaSyBMFbvl0poru2Xs1mUZfhrlhuYisItGiqQ"
 GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+
+# Socket.IO server URL
 SERVER_URL = "https://mattermost-translate-bot.onrender.com"
 
-MAX_LOG_ENTRIES = 200
-HTML_LOG = "translated_log.html"
-META_REFRESH_SECONDS = 5
-
+# Hàm gọi Gemini API để dịch
 def call_gemini_translate(text, target_language="vi"):
     prompt_text = f"Dịch sang tiếng {target_language}, giữ nguyên ý nghĩa: {text}"
     headers = {
@@ -59,7 +52,8 @@ def escape_html(s):
              .replace("'", "&#39;"))
 
 def append_log_to_html(original, translated, sender, channel):
-    # Tạo file nếu chưa có
+    HTML_LOG = "translated_log.html"
+    META_REFRESH_SECONDS = 5
     if not os.path.exists(HTML_LOG):
         with open(HTML_LOG, "w", encoding="utf-8") as f:
             f.write(f"""<!DOCTYPE html>
@@ -83,54 +77,29 @@ body {{ font-family: sans-serif; background:#f5f5f5; padding:20px; }}
 </html>
 """)
 
-    # Đọc nội dung cũ, lấy danh sách entries hiện tại
-    with open(HTML_LOG, "r", encoding="utf-8") as f:
-        content = f.read()
-
-    # Tách phần giữa <body> và </body> để xử lý log entries
-    body_start = content.find("<body>")
-    body_end = content.rfind("</body>")
-
-    if body_start == -1 or body_end == -1 or body_end <= body_start:
-        # Trường hợp file bị hỏng hoặc không đúng định dạng, ghi lại mới
-        entries = []
-    else:
-        body_content = content[body_start+6:body_end]
-        # Tách các entry qua div.entry
-        entries = []
-        split_entries = body_content.split('<div class="entry">')
-        for part in split_entries[1:]:
-            entries.append('<div class="entry">' + part)
-
-    # Thêm entry mới vào đầu (hoặc cuối tùy bạn)
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    new_entry = f"""
+    html_snip = f"""
 <div class="entry">
 <div class="timestamp">🕒 {timestamp}</div>
-<b>👤 @{escape_html(sender)}</b> tại <code>#{escape_html(channel)}</code>
+<b>👤 @{sender}</b> tại <code>#{channel}</code>
 <div class="original">💬 <b>Gốc:</b> {escape_html(original)}</div>
 <div class="translated">🔁 <b>Dịch:</b> {escape_html(translated)}</div>
 </div>
 """
-    entries.append(new_entry)
-
-    # Giới hạn số entries tối đa
-    if len(entries) > MAX_LOG_ENTRIES:
-        entries = entries[-MAX_LOG_ENTRIES:]  # giữ 200 entry cuối cùng
-
-    # Tạo lại body mới
-    new_body = "\n".join(entries)
-
-    # Tạo lại toàn bộ file
-    new_content = content[:body_start+6] + new_body + content[body_end:]
-
+    with open(HTML_LOG, "r", encoding="utf-8") as f:
+        content = f.read()
+    idx = content.rfind("</body>")
+    if idx == -1:
+        new = content + html_snip
+    else:
+        new = content[:idx] + html_snip + content[idx:]
     with open(HTML_LOG, "w", encoding="utf-8") as f:
-        f.write(new_content)
+        f.write(new)
 
 class GeminiTranslateApp(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("📨 Kiểm tra tin nhắn (kèm bản dịch bằng Gemini)")
+        self.setWindowTitle("📨 Tổng số tin nhắn (Dịch bằng Gemini)")
         self.resize(650, 450)
         self.setStyleSheet("background-color: #f0f2f5;")
 
@@ -155,34 +124,10 @@ class GeminiTranslateApp(QWidget):
         self.sio.on("connect", self.on_connect)
         self.sio.on("disconnect", self.on_disconnect)
 
-        # Khởi tạo file log HTML nếu chưa có
-        if not os.path.exists(HTML_LOG):
-            with open(HTML_LOG, "w", encoding="utf-8") as f:
-                f.write(f"""<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>Translated Logs</title>
-<meta http-equiv="refresh" content="{META_REFRESH_SECONDS}">
-<style>
-body {{ font-family: sans-serif; background:#f5f5f5; padding:20px; }}
-.entry {{ background:white; padding:10px; margin-bottom:10px; border-left:5px solid #4caf50; }}
-.timestamp {{ font-size:12px; color:#999; }}
-.original {{ margin-top:8px; }}
-.translated {{ color:green; margin-top:6px; }}
-</style>
-</head>
-<body>
-<h2>📘 Lịch sử bản dịch</h2>
-<!-- entries appended below -->
-</body>
-</html>
-""")
+        # Khởi tạo file log HTML
+        append_log_to_html("", "", "", "")  # tạo file nếu chưa có
 
         threading.Thread(target=self.sio.connect, args=(SERVER_URL,), daemon=True).start()
-
-        if use_win10toast:
-            self.toaster = ToastNotifier()
 
     def on_connect(self):
         self.append_log_text("✅ Đã kết nối tới server.\n")
@@ -203,7 +148,9 @@ body {{ font-family: sans-serif; background:#f5f5f5; padding:20px; }}
         sender = data.get("user", "unknown")
         channel = data.get("channel", "unknown")
         original = data.get("original", "")
+        #self.append_log_text(f"🕒 Đang dịch tin nhắn mới từ @{sender}...\n", "#0078D7")
 
+        # Dịch Gemini trong thread tránh block UI
         def do_translate():
             translated = call_gemini_translate(original, "vi")
             log_text = f"📩 Từ @{sender} trong #{channel}\n💬 {original}\n🔁 {translated}\n---------------------------\n\n"
@@ -211,31 +158,6 @@ body {{ font-family: sans-serif; background:#f5f5f5; padding:20px; }}
             append_log_to_html(original, translated, sender, channel)
             self.total_count += 1
             self.label.setText(f"📨 Tổng số tin nhắn: {self.total_count}")
-
-            # Hiển thị thông báo desktop
-            title = f"Tin nhắn mới từ @{sender}"
-            message = f"#{channel}: {translated}"
-
-            def on_notification_click():
-                self.show()
-                self.raise_()
-                self.activateWindow()
-
-            if use_win10toast:
-                threading.Thread(target=lambda: self.toaster.show_toast(
-                    title,
-                    message,
-                    duration=5,
-                    threaded=True,
-                    callback_on_click=on_notification_click
-                )).start()
-            else:
-                notification.notify(
-                    title=title,
-                    message=message,
-                    timeout=5
-                )
-                # plyer không hỗ trợ click callback
 
         threading.Thread(target=do_translate, daemon=True).start()
 

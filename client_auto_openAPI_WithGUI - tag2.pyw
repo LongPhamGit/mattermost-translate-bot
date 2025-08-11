@@ -17,13 +17,18 @@ except ImportError:
     use_win10toast = False
     from plyer import notification
 
-API_KEY = "AIzaSyBMFbvl0poru2Xs1mUZfhrlhuYisItGiqQ"
-GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
-SERVER_URL = "https://mattermost-translate-bot.onrender.com"
 
-MAX_LOG_ENTRIES = 200
-HTML_LOG = "translated_log.html"
-META_REFRESH_SECONDS = 5
+# Load config
+with open("config.json", "r", encoding="utf-8") as f:
+    config = json.load(f)
+
+API_KEY = config["API_KEY"]
+GEMINI_URL = config["GEMINI_URL"]
+SERVER_URL = config["SERVER_URL"]
+MAX_LOG_ENTRIES = config["MAX_LOG_ENTRIES"]
+HTML_LOG = config["HTML_LOG"]
+META_REFRESH_SECONDS = config["META_REFRESH_SECONDS"]
+
 
 def call_gemini_translate(text, target_language="vi"):
     prompt_text = f"Dịch sang tiếng {target_language}, giữ nguyên ý nghĩa: {text}"
