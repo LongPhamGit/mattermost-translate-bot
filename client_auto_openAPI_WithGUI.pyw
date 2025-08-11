@@ -8,7 +8,8 @@ from datetime import datetime
 import socketio
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QTextEdit, QLabel
 from PyQt6.QtGui import QFont, QColor, QTextCharFormat, QTextCursor
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QUrl
+from PyQt6.QtGui import QDesktopServices
 
 try:
     from win10toast_click import ToastNotifier
@@ -17,13 +18,18 @@ except ImportError:
     use_win10toast = False
     from plyer import notification
 
-API_KEY = "AIzaSyBMFbvl0poru2Xs1mUZfhrlhuYisItGiqQ"
-GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
-SERVER_URL = "https://mattermost-translate-bot.onrender.com"
 
-MAX_LOG_ENTRIES = 200
-HTML_LOG = "translated_log.html"
-META_REFRESH_SECONDS = 5
+# Load config
+with open("config.json", "r", encoding="utf-8") as f:
+    config = json.load(f)
+
+API_KEY = config["API_KEY"]
+GEMINI_URL = config["GEMINI_URL"]
+SERVER_URL = config["SERVER_URL"]
+MAX_LOG_ENTRIES = config["MAX_LOG_ENTRIES"]
+HTML_LOG = config["HTML_LOG"]
+META_REFRESH_SECONDS = config["META_REFRESH_SECONDS"]
+
 
 def call_gemini_translate(text, target_language="vi"):
     prompt_text = f"Dịch sang tiếng {target_language}, giữ nguyên ý nghĩa: {text}"
@@ -49,6 +55,7 @@ def call_gemini_translate(text, target_language="vi"):
     except Exception as e:
         return f"[Lỗi dịch Gemini]: {e}"
 
+
 def escape_html(s):
     if s is None:
         return ""
@@ -58,8 +65,8 @@ def escape_html(s):
              .replace('"', "&quot;")
              .replace("'", "&#39;"))
 
+
 def append_log_to_html(original, translated, sender, channel):
-    # Tạo file nếu chưa có
     if not os.path.exists(HTML_LOG):
         with open(HTML_LOG, "w", encoding="utf-8") as f:
             f.write(f"""<!DOCTYPE html>
@@ -83,65 +90,66 @@ body {{ font-family: sans-serif; background:#f5f5f5; padding:20px; }}
 </html>
 """)
 
-    # Đọc nội dung cũ, lấy danh sách entries hiện tại
     with open(HTML_LOG, "r", encoding="utf-8") as f:
         content = f.read()
 
-    # Tách phần giữa <body> và </body> để xử lý log entries
     body_start = content.find("<body>")
     body_end = content.rfind("</body>")
 
     if body_start == -1 or body_end == -1 or body_end <= body_start:
-        # Trường hợp file bị hỏng hoặc không đúng định dạng, ghi lại mới
         entries = []
     else:
         body_content = content[body_start+6:body_end]
-        # Tách các entry qua div.entry
         entries = []
         split_entries = body_content.split('<div class="entry">')
         for part in split_entries[1:]:
             entries.append('<div class="entry">' + part)
 
-    # Thêm entry mới vào đầu (hoặc cuối tùy bạn)
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     new_entry = f"""
 <div class="entry">
 <div class="timestamp">🕒 {timestamp}</div>
-<b>👤 @{escape_html(sender)}</b> tại <code>#{escape_html(channel)}</code>
+Từ <b>👤 @{escape_html(sender)}</b> tại <code>#{escape_html(channel)}</code>
 <div class="original">💬 <b>Gốc:</b> {escape_html(original)}</div>
 <div class="translated">🔁 <b>Dịch:</b> {escape_html(translated)}</div>
 </div>
 """
     entries.append(new_entry)
 
-    # Giới hạn số entries tối đa
     if len(entries) > MAX_LOG_ENTRIES:
-        entries = entries[-MAX_LOG_ENTRIES:]  # giữ 200 entry cuối cùng
+        entries = entries[-MAX_LOG_ENTRIES:]
 
-    # Tạo lại body mới
     new_body = "\n".join(entries)
-
-    # Tạo lại toàn bộ file
     new_content = content[:body_start+6] + new_body + content[body_end:]
 
     with open(HTML_LOG, "w", encoding="utf-8") as f:
         f.write(new_content)
 
+
 class GeminiTranslateApp(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("📨 Kiểm tra tin nhắn (kèm bản dịch bằng Gemini)")
-        self.resize(650, 450)
+        self.resize(650, 480)
         self.setStyleSheet("background-color: #f0f2f5;")
 
         self.total_count = 0
 
         self.layout = QVBoxLayout()
+
+        # Label tổng số tin nhắn
         self.label = QLabel("📨 Tổng số tin nhắn: 0")
         self.label.setFont(QFont("Segoe UI", 16, QFont.Weight.Bold))
         self.label.setStyleSheet("color: #333333;")
         self.layout.addWidget(self.label)
 
+        # Thêm link mở HTML log
+        self.link_label = QLabel(f'<a href="{HTML_LOG}">📂 Mở lịch sử bản dịch (HTML)</a>')
+        self.link_label.setOpenExternalLinks(False)  # để bắt sự kiện click
+        self.link_label.linkActivated.connect(self.open_html_log)
+        self.layout.addWidget(self.link_label)
+
+        # Vùng log text
         self.text_log = QTextEdit()
         self.text_log.setReadOnly(True)
         self.text_log.setFont(QFont("Consolas", 12))
@@ -155,7 +163,6 @@ class GeminiTranslateApp(QWidget):
         self.sio.on("connect", self.on_connect)
         self.sio.on("disconnect", self.on_disconnect)
 
-        # Khởi tạo file log HTML nếu chưa có
         if not os.path.exists(HTML_LOG):
             with open(HTML_LOG, "w", encoding="utf-8") as f:
                 f.write(f"""<!DOCTYPE html>
@@ -183,6 +190,9 @@ body {{ font-family: sans-serif; background:#f5f5f5; padding:20px; }}
 
         if use_win10toast:
             self.toaster = ToastNotifier()
+
+    def open_html_log(self):
+        QDesktopServices.openUrl(QUrl.fromLocalFile(os.path.abspath(HTML_LOG)))
 
     def on_connect(self):
         self.append_log_text("✅ Đã kết nối tới server.\n")
@@ -212,7 +222,6 @@ body {{ font-family: sans-serif; background:#f5f5f5; padding:20px; }}
             self.total_count += 1
             self.label.setText(f"📨 Tổng số tin nhắn: {self.total_count}")
 
-            # Hiển thị thông báo desktop
             title = f"Tin nhắn mới từ @{sender}"
             message = f"#{channel}: {translated}"
 
@@ -235,9 +244,9 @@ body {{ font-family: sans-serif; background:#f5f5f5; padding:20px; }}
                     message=message,
                     timeout=5
                 )
-                # plyer không hỗ trợ click callback
 
         threading.Thread(target=do_translate, daemon=True).start()
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
