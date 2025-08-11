@@ -11,7 +11,7 @@ from PyQt6.QtGui import QFont, QColor, QTextCharFormat, QTextCursor
 from PyQt6.QtCore import Qt
 
 # Thay bằng API key Gemini của bạn
-API_KEY = "AIzaSyBMFbvl0poru2Xs1mUZfhrlhuYisItGiqQ"
+API_KEY = ""
 GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
 
 # Socket.IO server URL
