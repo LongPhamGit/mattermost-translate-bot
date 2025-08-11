@@ -1,57 +1,37 @@
-let unreadCount = 0;
-let serverUrl = "";
-let token = "";
+let lastMessageId = null; // Lưu ID tin nhắn cuối cùng để tránh trùng lặp
+const API_URL = "https://mattermost-translate-bot.onrender.com/translate"; // API của bạn
 
-// Load config
-chrome.storage.local.get(["serverUrl", "token"], (data) => {
-  serverUrl = data.serverUrl || "";
-  token = data.token || "";
-  if (serverUrl && token) {
-    connectSocket();
-  }
-});
+async function checkNewMessages() {
+    try {
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error("HTTP error " + res.status);
 
-function connectSocket() {
-  const script = document.createElement("script");
-  script.src = serverUrl + "/socket.io/socket.io.js";
-  script.onload = () => {
-    const socket = io(serverUrl);
-    socket.on("new_message", (msg) => {
-      unreadCount++;
-      chrome.action.setBadgeText({ text: unreadCount.toString() });
-      chrome.notifications.create({
-        type: "basic",
-        iconUrl: "icon.png",
-        title: `New message from ${msg.user}`,
-        message: msg.text
-      });
-    });
-  };
-  document.head.appendChild(script);
+        const data = await res.json();
+        if (!Array.isArray(data)) return;
+
+        // Giả sử API trả về danh sách tin nhắn, mỗi tin có {id, translated}
+        const newest = data[data.length - 1];
+        
+        if (newest && newest.id !== lastMessageId) {
+            lastMessageId = newest.id;
+
+            // Gửi thông báo
+            chrome.notifications.create({
+                type: "basic",
+                iconUrl: "icon.png",
+                title: "Tin nhắn mới",
+                message: newest.translated || "Không có nội dung"
+            });
+
+            console.log("Tin mới:", newest.translated);
+        }
+    } catch (err) {
+        console.error("Lỗi khi fetch tin nhắn:", err);
+    }
 }
 
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if (msg.action === "register") {
-    fetch(`${msg.serverUrl}/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ reg_code: msg.regCode })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.token) {
-          chrome.storage.local.set({
-            serverUrl: msg.serverUrl,
-            token: data.token
-          });
-          serverUrl = msg.serverUrl;
-          token = data.token;
-          connectSocket();
-          sendResponse({ success: true });
-        } else {
-          sendResponse({ success: false });
-        }
-      });
-    return true;
-  }
-});
+// Chạy mỗi 5 giây
+setInterval(checkNewMessages, 5000);
+
+// Chạy ngay khi extension load
+checkNewMessages();

@@ -1,47 +1,77 @@
-from flask import Flask, request, jsonify
-from flask_socketio import SocketIO
-from deep_translator import GoogleTranslator
-import uuid
+from flask import Flask, request
+# Thay đổi thư viện dịch thuật tại đây
+from deep_translator import LibreTranslator 
+from datetime import datetime
 import os
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
 
-@app.route("/")
-def home():
-    return "✅ Mattermost Translate Bot WebSocket Server is running"
+HTML_LOG = "translated_log.html"
 
-@app.route("/translate", methods=["POST"])
+def init_html_file():
+    if not os.path.exists(HTML_LOG):
+        with open(HTML_LOG, "w", encoding="utf-8") as f:
+            f.write("""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Translated Logs</title>
+    <style>
+        body { font-family: sans-serif; background: #f5f5f5; padding: 20px; }
+        .entry { background: white; padding: 10px; margin-bottom: 10px; border-left: 5px solid #4caf50; }
+        .timestamp { font-size: 12px; color: #999; }
+        .original { margin-top: 10px; }
+        .translated { color: green; margin-top: 5px; }
+    </style>
+</head>
+<body>
+<h2>📘 Lịch sử bản dịch</h2>
+""")
+
+def append_log_to_html(original, translated, sender, channel):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    html = f"""<div class="entry">
+<div class="timestamp">🕒 {timestamp}</div>
+<b>👤 @{sender}</b> tại <code>#{channel}</code>
+<div class="original">💬 <b>Gốc:</b> {original}</div>
+<div class="translated">> <b>Dịch:</b> {translated}</div>
+</div>
+"""
+    with open(HTML_LOG, "a", encoding="utf-8") as f:
+        f.write(html)
+
+@app.route('/translate', methods=['POST'])
 def translate():
-    text = request.form.get("text", "")
-    user = request.form.get("user_name", "")
-    channel = request.form.get("channel_name", "")
+    text = request.form.get('text')
+    user = request.form.get('user_name')
+    channel = request.form.get('channel_name')
 
     if not text:
-        return jsonify({"error": "No text provided"}), 400
+        return "Không có nội dung", 200
+
+    if "@pnblong" not in text and "@channel" not in text and "@all" not in text:
+        return "Không chứa mention hợp lệ", 200
 
     try:
-        # Dịch tự động sang tiếng Việt
-        translated = GoogleTranslator(source="auto", target="vi").translate(text)
+        # Thay đổi hàm dịch thuật tại đây
+        translated = LibreTranslator(source='auto', target='vi').translate(text) 
+
+        append_log_to_html(text, translated, user, channel)
+
+        message = f"""📩 Mention từ @{user} tại #{channel}:\n> {text}\n\n🈶 Dịch: {translated}"""
+        return message, 200
+
     except Exception as e:
-        return jsonify({"error": f"Lỗi dịch: {e}"}), 500
+        return f"❌ Lỗi xử lý: {e}", 500
 
-    message = {
-        "id": str(uuid.uuid4()),
-        "user": user,
-        "channel": channel,
-        "original": text,
-        "translated": translated
-    }
+@app.route('/logs', methods=['GET'])
+def view_logs():
+    if not os.path.exists(HTML_LOG):
+        return "<h3>Chưa có bản dịch nào.</h3>"
+    with open(HTML_LOG, 'r', encoding='utf-8') as f:
+        return f.read()
 
-    # Gửi tin nhắn mới tới tất cả client WebSocket
-    socketio.emit("new_message", message)
-
-    return jsonify({
-        "status": "ok",
-        "message": message
-    })
-
-if __name__ == "__main__":
+if __name__ == '__main__':
+    init_html_file()
     port = int(os.environ.get("PORT", 5000))
-    socketio.run(app, host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=port)

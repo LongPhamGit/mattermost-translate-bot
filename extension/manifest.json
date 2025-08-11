@@ -1,18 +1,21 @@
 {
   "manifest_version": 3,
-  "name": "Mattermost Translate Notifier",
+  "name": "Message Logger",
   "version": "1.0",
-  "permissions": ["storage", "notifications", "alarms"],
+  "description": "Nhận tin nhắn từ Render và lưu vào log HTML.",
+  "permissions": [
+    "storage",
+    "notifications"
+  ],
+  "host_permissions": [
+    "https://mattermost-translate-bot.onrender.com/*"
+  ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "action": {
-    "default_popup": "popup.html"
-  },
-  "icons": {
-    "128": "icon.png"
-  },
-  "host_permissions": [
-    "*://*/"
-  ]
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  }
 }

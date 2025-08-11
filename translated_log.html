@@ -3,21 +3,93 @@
 <head>
 <meta charset="utf-8">
 <title>Translated Logs</title>
+<meta http-equiv="refresh" content="5">
+<style>
+body { font-family: sans-serif; background:#f5f5f5; padding:20px; }
+.entry { background:white; padding:10px; margin-bottom:10px; border-left:5px solid #4caf50; }
+.timestamp { font-size:12px; color:#999; }
+.original { margin-top:8px; }
+.translated { color:green; margin-top:6px; }
+</style>
 </head>
 <body>
-<h1>Translated Messages</h1>
-<ul id="log-list"></ul>
-<script>
-fetch('/logs')
-.then(res => res.json())
-.then(data => {
-    const ul = document.getElementById('log-list');
-    data.forEach(msg => {
-        const li = document.createElement('li');
-        li.textContent = `[${msg.channel}] ${msg.user}: ${msg.text}`;
-        ul.appendChild(li);
-    });
-});
-</script>
+<h2>📘 Lịch sử bản dịch</h2>
+<!-- entries appended below -->
+
+<div class="entry">
+<div class="timestamp">🕒 2025-08-11 14:53:00</div>
+<b>👤 @Long</b> tại <code>#Test</code>
+<div class="original">💬 <b>Gốc:</b> @pnblong 本ページの右上の［ログイン］ボタンをクリック、もしくはこちらへアクセス</div>
+<div class="translated">🈶 <b>Dịch:</b> @pnblong Nhấp vào nút [Đăng nhập] ở trên cùng bên phải của trang này hoặc truy cập nó ở đây</div>
+</div>
+
+<div class="entry">
+<div class="timestamp">🕒 2025-08-11 14:53:57</div>
+<b>👤 @Long</b> tại <code>#Test</code>
+<div class="original">💬 <b>Gốc:</b> @pnblong Hi, what your name</div>
+<div class="translated">🈶 <b>Dịch:</b> @pnblong Xin chào, tên của bạn là gì</div>
+</div>
+
+<div class="entry">
+<div class="timestamp">🕒 2025-08-11 14:56:59</div>
+<b>👤 @Long</b> tại <code>#Test</code>
+<div class="original">💬 <b>Gốc:</b> @pnblong From tasks and workflows to apps and systems, build and automate anything in one powerful visual platform.</div>
+<div class="translated">🈶 <b>Dịch:</b> @pnblong từ các tác vụ và quy trình công việc đến các ứng dụng và hệ thống, xây dựng và tự động hóa mọi thứ trong một nền tảng trực quan mạnh mẽ.</div>
+</div>
+
+<div class="entry">
+<div class="timestamp">🕒 2025-08-11 15:06:42</div>
+<b>👤 @Long</b> tại <code>#Test</code>
+<div class="original">💬 <b>Gốc:</b> @pnblong From tasks and workflows to apps and systems, build and automate anything in one powerful visual platform.</div>
+<div class="translated">🈶 <b>Dịch:</b> @pnblong từ các tác vụ và quy trình công việc đến các ứng dụng và hệ thống, xây dựng và tự động hóa mọi thứ trong một nền tảng trực quan mạnh mẽ.</div>
+</div>
+
+<div class="entry">
+<div class="timestamp">🕒 2025-08-11 15:18:07</div>
+<b>👤 @Long</b> tại <code>#Test</code>
+<div class="original">💬 <b>Gốc:</b> @pnblong From tasks and workflows to apps and systems, build and automate anything in one powerful visual platform.</div>
+<div class="translated">🈶 <b>Dịch:</b> @pnblong từ các tác vụ và quy trình công việc đến các ứng dụng và hệ thống, xây dựng và tự động hóa mọi thứ trong một nền tảng trực quan mạnh mẽ.</div>
+</div>
+
+<div class="entry">
+<div class="timestamp">🕒 2025-08-11 15:19:20</div>
+<b>👤 @Long</b> tại <code>#Test</code>
+<div class="original">💬 <b>Gốc:</b> @pnblong熊本に大雨特別警報 土砂災害など被害も 最大級の警戒継続を</div>
+<div class="translated">🈶 <b>Dịch:</b> @pnblong Kumamoto Cảnh báo mưa lớn đặc biệt, bao gồm cả lở đất, để tiếp tục cảnh báo lớn nhất</div>
+</div>
+
+<div class="entry">
+<div class="timestamp">🕒 2025-08-11 15:20:20</div>
+<b>👤 @Long</b> tại <code>#Test</code>
+<div class="original">💬 <b>Gốc:</b> @pnblong前線の影響で、熊本県では線状降水帯が相次いで発生するなど記録的な大雨となっていて、熊本県の7つの市と町に大雨の特別警報が発表されています。すでに浸水や土砂災害による被害も出ていて、最大級の警戒を続けてください。このほか、九州北部や山口県などでの各地で雨量が多くなっていて、土砂災害や川の氾濫、低い土地の浸水に厳重な警戒が必要です</div>
+<div class="translated">🈶 <b>Dịch:</b> Do ảnh hưởng của mặt trận @pnblong, mưa lớn đã xảy ra ở tỉnh Kumamoto, với một loạt các vùng mưa tuyến tính xảy ra lần lượt, và các cảnh báo đặc biệt cho mưa lớn đã được đưa ra ở bảy thành phố và thị trấn ở tỉnh Kumamoto. Đã có những thiệt hại do lũ lụt và lở đất, vì vậy xin vui lòng tiếp tục là người cảnh giác nhất. Ngoài ra, có rất nhiều lượng mưa ở các khu vực khác nhau như phía bắc Kyushu và Yamaguchi, và cần cảnh giác nghiêm ngặt cho lở đất, lũ lụt trên sông và lũ lụt ở cấp độ thấp.</div>
+</div>
+
+<div class="entry">
+<div class="timestamp">🕒 2025-08-11 15:23:00</div>
+<b>👤 @Long</b> tại <code>#Test</code>
+<div class="original">💬 <b>Gốc:</b> @pnblong
+前線の影響で、熊本県では線状降水帯が相次いで発生するなど記録的な大雨となっていて、熊本県の7つの市と町に大雨の特別警報が発表されています。すでに浸水や土砂災害による被害も出ていて、最大級の警戒を続けてください。このほか、九州北部や山口県などでの各地で雨量が多くなっていて、土砂災害や川の氾濫、低い土地の浸水に厳重な警戒が必要です</div>
+<div class="translated">🈶 <b>Dịch:</b> @pnblong
+Do ảnh hưởng của mặt trận, cơn mưa phá kỷ lục đã xảy ra ở tỉnh Kumamoto, với một loạt các vùng mưa tuyến tính xảy ra lần lượt, và những cảnh báo đặc biệt về mưa lớn đã được ban hành tại bảy thành phố và thị trấn ở tỉnh Kumamoto. Đã có những thiệt hại do lũ lụt và lở đất, vì vậy xin vui lòng tiếp tục là người cảnh giác nhất. Ngoài ra, có rất nhiều lượng mưa ở các khu vực khác nhau như phía bắc Kyushu và Yamaguchi, và cần cảnh giác nghiêm ngặt cho lở đất, lũ lụt trên sông và lũ lụt ở cấp độ thấp.</div>
+</div>
+
+<div class="entry">
+<div class="timestamp">🕒 2025-08-11 15:25:06</div>
+<b>👤 @Long</b> tại <code>#Test</code>
+<div class="original">💬 <b>Gốc:</b> @pnblong
+前線の影響で、熊本県では線状降水帯が相次いで発生するなど記録的な大雨となっていて、熊本県の7つの市と町に大雨の特別警報が発表されています。すでに浸水や土砂災害による被害も出ていて、最大級の警戒を続けてください。このほか、九州北部や山口県などでの各地で雨量が多くなっていて、土砂災害や川の氾濫、低い土地の浸水に厳重な警戒が必要です</div>
+<div class="translated">🈶 <b>Dịch:</b> @pnblong
+Do ảnh hưởng của mặt trận, cơn mưa phá kỷ lục đã xảy ra ở tỉnh Kumamoto, với một loạt các vùng mưa tuyến tính xảy ra lần lượt, và những cảnh báo đặc biệt về mưa lớn đã được ban hành tại bảy thành phố và thị trấn ở tỉnh Kumamoto. Đã có những thiệt hại do lũ lụt và lở đất, vì vậy xin vui lòng tiếp tục là người cảnh giác nhất. Ngoài ra, có rất nhiều lượng mưa ở các khu vực khác nhau như phía bắc Kyushu và Yamaguchi, và cần cảnh giác nghiêm ngặt cho lở đất, lũ lụt trên sông và lũ lụt ở cấp độ thấp.</div>
+</div>
+
+<div class="entry">
+<div class="timestamp">🕒 2025-08-11 15:30:31</div>
+<b>👤 @Long</b> tại <code>#Test</code>
+<div class="original">💬 <b>Gốc:</b> @pnblong
+前線の影響で、熊本県では線状降水帯が相次いで発生するなど記録的な大雨となっていて、熊本県の7つの市と町に大雨の特別警報が発表されています。すでに浸水や土砂災害による被害も出ていて、最大級の警戒を続けてください。このほか、九州北部や山口県などでの各地で雨量が多くなっていて、土砂災害や川の氾濫、低い土地の浸水に厳重な警戒が必要です</div>
+<div class="translated">🈶 <b>Dịch:</b> @pnblong
+Do ảnh hưởng của mặt trận, cơn mưa phá kỷ lục đã xảy ra ở tỉnh Kumamoto, với một loạt các vùng mưa tuyến tính xảy ra lần lượt, và những cảnh báo đặc biệt về mưa lớn đã được ban hành tại bảy thành phố và thị trấn ở tỉnh Kumamoto. Đã có những thiệt hại do lũ lụt và lở đất, vì vậy xin vui lòng tiếp tục là người cảnh giác nhất. Ngoài ra, có rất nhiều lượng mưa ở các khu vực khác nhau như phía bắc Kyushu và Yamaguchi, và cần cảnh giác nghiêm ngặt cho lở đất, lũ lụt trên sông và lũ lụt ở cấp độ thấp.</div>
+</div>
 </body>
 </html>
