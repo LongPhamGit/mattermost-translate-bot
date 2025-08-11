@@ -1,22 +1,59 @@
+# gemini_translate_app.pyw
 import sys
 import os
 import threading
+import json
+import requests
 from datetime import datetime
-
 import socketio
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QTextEdit, QLabel
+from PyQt6.QtGui import QFont, QColor, QTextCharFormat, QTextCursor
+from PyQt6.QtCore import Qt
 
-try:
-    from win10toast_click import ToastNotifier
-    use_win10toast = True
-except ImportError:
-    use_win10toast = False
+# Thay bằng API key Gemini của bạn
+API_KEY = "AIzaSyBMFbvl0poru2Xs1mUZfhrlhuYisItGiqQ"
+GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
 
-HTML_LOG = "translated_log.html"
-META_REFRESH_SECONDS = 5
+# Socket.IO server URL
 SERVER_URL = "https://mattermost-translate-bot.onrender.com"
 
-def init_html_file():
+# Hàm gọi Gemini API để dịch
+def call_gemini_translate(text, target_language="vi"):
+    prompt_text = f"Dịch sang tiếng {target_language}, giữ nguyên ý nghĩa: {text}"
+    headers = {
+        "Content-Type": "application/json",
+        "X-goog-api-key": API_KEY,
+    }
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {"text": prompt_text}
+                ]
+            }
+        ]
+    }
+
+    try:
+        response = requests.post(GEMINI_URL, headers=headers, json=payload, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+    except Exception as e:
+        return f"[Lỗi dịch Gemini]: {e}"
+
+def escape_html(s):
+    if s is None:
+        return ""
+    return (s.replace("&", "&amp;")
+             .replace("<", "&lt;")
+             .replace(">", "&gt;")
+             .replace('"', "&quot;")
+             .replace("'", "&#39;"))
+
+def append_log_to_html(original, translated, sender, channel):
+    HTML_LOG = "translated_log.html"
+    META_REFRESH_SECONDS = 5
     if not os.path.exists(HTML_LOG):
         with open(HTML_LOG, "w", encoding="utf-8") as f:
             f.write(f"""<!DOCTYPE html>
@@ -40,23 +77,13 @@ body {{ font-family: sans-serif; background:#f5f5f5; padding:20px; }}
 </html>
 """)
 
-def escape_html(s):
-    if s is None:
-        return ""
-    return (s.replace("&", "&amp;")
-             .replace("<", "&lt;")
-             .replace(">", "&gt;")
-             .replace('"', "&quot;")
-             .replace("'", "&#39;"))
-
-def append_log_to_html(original, translated, sender, channel):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     html_snip = f"""
 <div class="entry">
 <div class="timestamp">🕒 {timestamp}</div>
 <b>👤 @{sender}</b> tại <code>#{channel}</code>
 <div class="original">💬 <b>Gốc:</b> {escape_html(original)}</div>
-<div class="translated">🈶 <b>Dịch:</b> {escape_html(translated)}</div>
+<div class="translated">🔁 <b>Dịch:</b> {escape_html(translated)}</div>
 </div>
 """
     with open(HTML_LOG, "r", encoding="utf-8") as f:
@@ -69,22 +96,27 @@ def append_log_to_html(original, translated, sender, channel):
     with open(HTML_LOG, "w", encoding="utf-8") as f:
         f.write(new)
 
-class AppDemo(QWidget):
+class GeminiTranslateApp(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("SocketIO Message Logger")
-        self.resize(600, 400)
+        self.setWindowTitle("📨 Tổng số tin nhắn (Dịch bằng Gemini)")
+        self.resize(650, 450)
+        self.setStyleSheet("background-color: #f0f2f5;")
 
-        self.unread_count = 0
+        self.total_count = 0
 
         self.layout = QVBoxLayout()
-        self.label = QLabel("Số tin nhắn chưa đọc: 0")
+        self.label = QLabel("📨 Tổng số tin nhắn: 0")
+        self.label.setFont(QFont("Segoe UI", 16, QFont.Weight.Bold))
+        self.label.setStyleSheet("color: #333333;")
+        self.layout.addWidget(self.label)
+
         self.text_log = QTextEdit()
         self.text_log.setReadOnly(True)
-        self.text_log.setStyleSheet("font-size: 18pt;")  # Tăng cỡ chữ lên 2 lần
-
-        self.layout.addWidget(self.label)
+        self.text_log.setFont(QFont("Consolas", 12))
+        self.text_log.setStyleSheet("background-color: white; border: 1px solid #ccc; padding: 8px;")
         self.layout.addWidget(self.text_log)
+
         self.setLayout(self.layout)
 
         self.sio = socketio.Client(reconnection=True, reconnection_attempts=5, reconnection_delay=2)
@@ -92,60 +124,45 @@ class AppDemo(QWidget):
         self.sio.on("connect", self.on_connect)
         self.sio.on("disconnect", self.on_disconnect)
 
-        init_html_file()
+        # Khởi tạo file log HTML
+        append_log_to_html("", "", "", "")  # tạo file nếu chưa có
 
-        # Kết nối server trong thread để không block UI
         threading.Thread(target=self.sio.connect, args=(SERVER_URL,), daemon=True).start()
 
-        if use_win10toast:
-            self.toaster = ToastNotifier()
-
     def on_connect(self):
-        self.append_log_text("✅ Connected to server.")
+        self.append_log_text("✅ Đã kết nối tới server.\n")
 
     def on_disconnect(self):
-        self.append_log_text("❌ Disconnected from server.")
+        self.append_log_text("❌ Mất kết nối tới server.\n")
 
-    def append_log_text(self, text):
-        self.text_log.append(text)
+    def append_log_text(self, text, color="#000000"):
+        cursor = self.text_log.textCursor()
+        cursor.movePosition(QTextCursor.MoveOperation.End)
+        fmt = QTextCharFormat()
+        fmt.setForeground(QColor(color))
+        cursor.insertText(text, fmt)
+        self.text_log.setTextCursor(cursor)
+        self.text_log.ensureCursorVisible()
 
     def on_new_message(self, data):
-        sender = data.get("user")
-        channel = data.get("channel")
-        original = data.get("original")
-        translated = data.get("translated")
+        sender = data.get("user", "unknown")
+        channel = data.get("channel", "unknown")
+        original = data.get("original", "")
+        #self.append_log_text(f"🕒 Đang dịch tin nhắn mới từ @{sender}...\n", "#0078D7")
 
-        log_text = f"📩 New message from @{sender} in #{channel}\nGốc: {original}\nDịch: {translated}\n"
-        self.append_log_text(log_text)
+        # Dịch Gemini trong thread tránh block UI
+        def do_translate():
+            translated = call_gemini_translate(original, "vi")
+            log_text = f"📩 Từ @{sender} trong #{channel}\n💬 {original}\n🔁 {translated}\n---------------------------\n\n"
+            self.append_log_text(log_text, "#000000")
+            append_log_to_html(original, translated, sender, channel)
+            self.total_count += 1
+            self.label.setText(f"📨 Tổng số tin nhắn: {self.total_count}")
 
-        append_log_to_html(original, translated, sender, channel)
-
-        # Hiển thị notification desktop
-        if use_win10toast:
-            def on_click():
-                self.show()
-                self.raise_()
-                self.activateWindow()
-            threading.Thread(target=lambda: self.toaster.show_toast(
-                f"Tin nhắn mới từ @{sender}",
-                f"#{channel}: {translated}",
-                duration=5,
-                threaded=True,
-                callback_on_click=on_click
-            )).start()
-        else:
-            from plyer import notification
-            notification.notify(
-                title=f"Tin nhắn mới từ @{sender}",
-                message=f"#{channel}: {translated}",
-                timeout=5
-            )
-
-        self.unread_count += 1
-        self.label.setText(f"Số tin nhắn chưa đọc: {self.unread_count}")
+        threading.Thread(target=do_translate, daemon=True).start()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    demo = AppDemo()
-    demo.show()
+    window = GeminiTranslateApp()
+    window.show()
     sys.exit(app.exec())
