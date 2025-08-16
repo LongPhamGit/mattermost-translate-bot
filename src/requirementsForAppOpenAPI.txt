@@ -1,0 +1,5 @@
+requests
+python-socketio
+PyQt6
+win10toast_click
+plyer
