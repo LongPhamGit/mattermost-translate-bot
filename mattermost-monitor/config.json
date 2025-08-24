@@ -1,0 +1,24 @@
+{
+    "SERVER_URL": "http://localhost:8065",
+    "WS_URL": "ws://localhost:8065/api/v4/websocket",
+    "MMUSERID": "7s7bbn9m8i89je3p6n1tx3gukw",
+    "MMAUTHTOKEN": "jrgcsd9r9frijf4q6w7dopux3w",
+    "MY_USERNAME": "lpham",
+    "WATCH_CHANNELS": [
+        "36k7azzjmpdypg65h1pf8pj3ur",
+        "w4ejrmpte3yi5gx53wf83oda3c",
+        "4rkej5s6m3fkmnn7easruqndew",
+        "nuexep7yajf3um7q96tsucjtha"
+    ],
+    "_comment": {
+        "36k7azzjmpdypg65h1pf8pj3ur": "off-topic",
+        "w4ejrmpte3yi5gx53wf83oda3c": "testmt",
+        "4rkej5s6m3fkmnn7easruqndew": "town-square",
+        "nuexep7yajf3um7q96tsucjtha": "開発4課"
+    },
+    "API_KEY": "AIzaSyBMFbvl0poru2Xs1mUZfhrlhuYisItGiqQ",
+    "GEMINI_URL": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+    "MAX_LOG_ENTRIES": 1000,
+    "HTML_LOG": "messages.html",
+    "META_REFRESH_SECONDS": 5
+}

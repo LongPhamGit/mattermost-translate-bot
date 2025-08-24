@@ -1,0 +1,8 @@
+{
+    "API_KEY": "AIzaSyBMFbvl0poru2Xs1mUZfhrlhuYisItGiqQ",
+    "GEMINI_URL": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+    "SERVER_URL": "https://mattermost-translate-bot.onrender.com",
+    "MAX_LOG_ENTRIES": 200,
+    "HTML_LOG": "translated_log.html",
+    "META_REFRESH_SECONDS": 5
+}
