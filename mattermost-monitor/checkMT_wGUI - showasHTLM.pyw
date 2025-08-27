@@ -10,16 +10,16 @@ import requests
 import websocket
 from markdown import markdown
 
-from PyQt6.QtCore import pyqtSignal, QObject, Qt, QTimer, QUrl
+from PyQt6.QtCore import pyqtSignal, QObject, Qt, QUrl        # NEW: QUrl
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLabel,
     QMessageBox, QSizePolicy
 )
-from PyQt6.QtGui import QFont, QDesktopServices
+from PyQt6.QtGui import QFont, QDesktopServices               # NEW: QDesktopServices
 from PyQt6.QtWebEngineWidgets import QWebEngineView
-from PyQt6.QtWebEngineCore import QWebEnginePage
+from PyQt6.QtWebEngineCore import QWebEnginePage              # NEW: QWebEnginePage
 
-# =============== Notifications (Windows click-to-open supported) ===============
+# Optional notifications
 import platform
 USE_WIN_CLICK = (platform.system() == "Windows")
 TOASTER = None
@@ -64,7 +64,7 @@ ROTATE_TARGET_RATIO = 0.9
 HTML_HEADER = """<html><head><meta charset='utf-8'>
 <style>
 body {font-family: Arial, sans-serif; font-size:14px; background:#f4f6f8; margin:20px;}
-.container {max-width:1000px; margin:0 auto; height:auto;}
+.container {max-width:1000px; margin:0 auto;}
 .msg {margin:12px 0; padding:12px 14px; border:1px solid #e0e0e0;
       border-radius:8px; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,0.05);}
 .msg:nth-child(even){background:#fbfbfb;}
@@ -167,58 +167,33 @@ def call_gemini_translate(text: str, target_language: str = "vi") -> str:
     except Exception:
         return "[Lỗi dịch]"
 
-# ================== Mở link ngoài bằng browser hệ thống ==================
+# ---------------- NEW: QWebEnginePage mở link bằng trình duyệt hệ thống ----------------
 class ExternalLinkPage(QWebEnginePage):
     def acceptNavigationRequest(self, url, nav_type, isMainFrame):
+        # Khi người dùng click vào một hyperlink trong view
         if nav_type == QWebEnginePage.NavigationType.NavigationTypeLinkClicked:
+            # Chỉ cho mở ngoài đối với http/https/mailto
             if url.scheme() in ("http", "https", "mailto"):
                 QDesktopServices.openUrl(url)
-                return False
+                return False  # không điều hướng trong WebView
         return super().acceptNavigationRequest(url, nav_type, isMainFrame)
 
+    # Xử lý các trường hợp target="_blank" / window.open(...)
     def createWindow(self, web_window_type):
         temp_page = QWebEnginePage(self.profile())
         def _open_external(u: QUrl):
             if u.isValid() and u.scheme() in ("http", "https", "mailto"):
                 QDesktopServices.openUrl(u)
         temp_page.urlChanged.connect(_open_external)
-        return temp_page
+        return temp_page  # không gắn vào view chính; chỉ để bắt URL rồi mở ngoài
 
 # ---------------- Signals ----------------
 class Signals(QObject):
-    new_message = pyqtSignal(str, str, str, str)  # sender, channel, message, translated
+    new_message = pyqtSignal(str, str, str, str)
     set_connected = pyqtSignal(bool)
     update_count = pyqtSignal(int)
-    clicked = pyqtSignal()  # <-- bridge cho click thông báo (thread-safe)
 
-signals = Signals()  # Tạo trong main thread
-
-# ============== Helper: gửi toast và emit signal vào Qt main thread ==============
-def send_clickable_toast(title: str, message: str):
-    """
-    Gửi 1 toast (Windows). Khi click:
-      - Emit signals.clicked() -> Qt tự dispatch vào main thread (QueuedConnection),
-        rồi MainWindow xử lý mở GUI & scroll.
-    """
-    if TOASTER is not None:
-        try:
-            def _on_click():
-                try:
-                    # Emit từ thread khác được, Qt sẽ queue về main thread
-                    signals.clicked.emit()
-                except Exception:
-                    pass
-            # Sticky để kịp click; muốn tự tắt thì đổi duration=5
-            TOASTER.show_toast(title, message, duration=None, threaded=True, callback_on_click=_on_click)
-            return
-        except Exception:
-            pass
-    # Fallback (không có callback click)
-    if plyer_notification:
-        try:
-            plyer_notification.notify(title=title, message=message, timeout=5)
-        except Exception:
-            pass
+signals = Signals()
 
 # ---------------- MainWindow ----------------
 class MainWindow(QWidget):
@@ -227,12 +202,12 @@ class MainWindow(QWidget):
         self.setWindowTitle("Mattermost Monitor – WebEngine")
         self.resize(980, 760)
 
-        # --------- TOP BAR ----------
+        # --------- TOP BAR (compact) ----------
         top_layout = QHBoxLayout()
-        top_layout.setContentsMargins(2, 0, 2, 0)
+        top_layout.setContentsMargins(2, 0, 2, 0)     # giảm margin
         top_layout.setSpacing(4)
 
-        font_btn = QFont("Arial", 12)
+        font_btn = QFont("Arial", 12)                 # giữ như bạn đã chỉnh
         font_label = QFont("Arial", 12)
 
         self.btn_open = QPushButton("Mở file log HTML")
@@ -256,18 +231,17 @@ class MainWindow(QWidget):
         top_layout.addWidget(self.lbl_count)
         top_layout.addWidget(self.lbl_status)
 
+        # Bọc vào widget riêng, ấn định chiều cao
         top_widget = QWidget()
         top_widget.setLayout(top_layout)
         top_widget.setFixedHeight(36)
-        top_widget.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        top_widget.setSizePolicy(QSizePolicy.Policy.Preferred,
+                                 QSizePolicy.Policy.Fixed)
 
         # --------- WEB VIEW ----------
         self.web = QWebEngineView()
-        self.web.setPage(ExternalLinkPage(self.web))
-
-        # GUI KHỞI ĐỘNG TRỐNG: không nạp nội dung cũ vào vùng log
-        self.gui_body = ""          # chỉ hiển thị tin mới
-        self.set_web_html()         # render trống (chỉ header/footer)
+        self.web.setPage(ExternalLinkPage(self.web))   # NEW: gắn page xử lý link
+        self.reload_view()
 
         # --------- MAIN LAYOUT ----------
         v = QVBoxLayout()
@@ -283,54 +257,32 @@ class MainWindow(QWidget):
         signals.new_message.connect(self.on_new_message)
         signals.set_connected.connect(self.on_set_connected)
         signals.update_count.connect(self.on_update_count)
-        # Khi click vào thông báo -> mở GUI + scroll
-        signals.clicked.connect(self._show_and_scroll_bottom, type=Qt.ConnectionType.QueuedConnection)
 
-    # === Bring-to-front & scroll xuống cuối ===
-    def _show_and_scroll_bottom(self):
+        # HTML buffer
+        self.gui_body = ""
         try:
-            # Bỏ minimize nếu đang minimize
-            self.setWindowState(self.windowState() & ~Qt.WindowMinimized)
-            # Bật on-top tạm để nổi lên trước
-            self.setWindowFlag(Qt.WindowStaysOnTopHint, True)
-            self.show()            # áp dụng flag
-            self.raise_()
-            self.activateWindow()
-            QApplication.alert(self, 0)   # chớp taskbar
-
-            # Tắt on-top sau 600ms để không làm phiền
-            QTimer.singleShot(600, self._clear_on_top_flag)
-
-            # Cuộn xuống cuối (container hoặc body)
-            js = r"""
-            (function(){
-                var cont = document.querySelector('.container');
-                if (cont) {
-                    try { cont.scrollTop = cont.scrollHeight; } catch(e){}
-                    try { if (cont.lastElementChild) cont.lastElementChild.scrollIntoView({behavior:'instant', block:'end'}); } catch(e){}
-                } else {
-                    try { window.scrollTo(0, document.body.scrollHeight); } catch(e){}
-                }
-                return true;
-            })();
-            """
-            self.web.page().runJavaScript(js)
+            with open(HTML_LOG_FILE, "r", encoding="utf-8") as f:
+                content = f.read()
+            if content.startswith(HTML_HEADER):
+                body = content[len(HTML_HEADER):]
+                if body.endswith(HTML_FOOTER):
+                    body = body[:-len(HTML_FOOTER)]
+                self.gui_body = body
         except Exception:
-            pass
+            self.gui_body = ""
 
-    def _clear_on_top_flag(self):
-        try:
-            self.setWindowFlag(Qt.WindowStaysOnTopHint, False)
-            self.show()
-        except Exception:
-            pass
+        self.set_web_html()
 
     def set_web_html(self):
         self.web.setHtml(HTML_HEADER + self.gui_body + HTML_FOOTER)
 
     def reload_view(self):
-        # KHÔNG nạp file log vào GUI khi mở app
-        self.set_web_html()
+        if os.path.exists(HTML_LOG_FILE):
+            with open(HTML_LOG_FILE, "r", encoding="utf-8") as f:
+                html_content = f.read()
+            self.web.setHtml(html_content)
+        else:
+            self.web.setHtml(HTML_HEADER + HTML_FOOTER)
 
     def open_log(self):
         path = os.path.abspath(HTML_LOG_FILE)
@@ -354,7 +306,6 @@ class MainWindow(QWidget):
         safe_trans = html_lib.escape(translated or "")
         html_text = markdown(safe_text, extensions=["fenced_code", "tables"])
         html_trans = markdown(safe_trans, extensions=["fenced_code", "tables"]) if safe_trans else ""
-
         entry = (
             f"<div class='msg {'mention' if css_class=='mention' else ''}'>"
             f"<div class='timestamp'>[{html_lib.escape(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))}]</div>"
@@ -366,11 +317,8 @@ class MainWindow(QWidget):
             entry += f"<div class='translated'>{html_trans}</div>"
         entry += "</div>\n"
 
-        # Cập nhật GUI chỉ với tin mới
         self.gui_body += entry
         self.set_web_html()
-
-        # Ghi file log như cũ
         append_html(sender, channel, message, css_class=("mention" if css_class=="mention" else "normal"), translated=translated)
 
     def on_set_connected(self, ok: bool):
@@ -415,32 +363,36 @@ class WSClient:
             post = json.loads(data["data"]["post"])
         except Exception:
             return
-
         channel_id = post.get("channel_id")
         if channel_id not in WATCH_CHANNELS:
             return
-
         user_id = post.get("user_id", "unknown")
         sender = USER_MAP.get(user_id, user_id)
         channel_name = CHANNEL_MAP.get(channel_id, channel_id)
         raw_text = post.get("message", "")
-
         is_personal = f"@{MY_USERNAME.lower()}" in (raw_text or "").lower()
         is_channel = any(k in (raw_text or "").lower() for k in ("@channel","@here","@all"))
+        css_class = "mention" if is_personal else "normal"
         translated = call_gemini_translate(raw_text, target_language="vi") if (API_KEY and GEMINI_URL) else ""
-
         signals.new_message.emit(sender, channel_name, raw_text, translated)
-
         self.msg_count += 1
         signals.update_count.emit(self.msg_count)
-
         if is_personal or is_channel:
             title = f"Mention từ {sender}" if is_personal else f"Channel mention trong #{channel_name}"
             self.notify(title, raw_text)
 
     def notify(self, title, message):
-        # 1 thông báo duy nhất; click => emit signal -> mở GUI + scroll
-        send_clickable_toast(title, message)
+        if TOASTER is not None:
+            try:
+                TOASTER.show_toast(title, message, duration=5, threaded=True)
+                return
+            except Exception:
+                pass
+        if plyer_notification:
+            try:
+                plyer_notification.notify(title=title, message=message, timeout=5)
+            except Exception:
+                pass
 
     def on_error(self, ws, error):
         signals.set_connected.emit(False)
