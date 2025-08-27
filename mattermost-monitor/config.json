@@ -1,8 +1,8 @@
 {
-  "SERVER_URL": "https://mattermost01.ssl.mdomain",
-  "WS_URL": "wss://mattermost01.ssl.mdomain/api/v4/websocket",
-  "MMUSERID": "cue41cmtybnubxuzfetoegyxqe",
-  "MMAUTHTOKEN": "869fsqgampd3fc6iuwketn8m9w",
+  "SERVER_URL": "https://mattermost01.***.mdomain",
+  "WS_URL": "wss://mattermost01.***.mdomain/api/v4/websocket",
+  "MMUSERID": "cue41cmtybnubxuzfetoegy***",
+  "MMAUTHTOKEN": "869fsqgampd3fc6iuwketn8***",
   "MY_USERNAME": "pnblong",
   "WATCH_CHANNELS": [
     "teyehqtsstfhtqk7uyz3ob338o",
@@ -46,9 +46,10 @@
 	"ag6pzuuxjtb7tjzrdyyb5qecyy": "hikaru.imamoto",
     "644uojzepp88jpbj5wf4ga7goa": "hiroaki.saito"
   },
-  "API_KEY": "AIzaSyBMFbvl0poru2Xs1mUZfhrlhuYisItGiqQ",
+  "API_KEY": "AIzaSyBMFbvl0poru2Xs1mUZfhrlhuYisItG***",
   "GEMINI_URL": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
   "MAX_LOG_ENTRIES": 1000,
   "HTML_LOG": "messages.html",
   "META_REFRESH_SECONDS": 5
+
 }
