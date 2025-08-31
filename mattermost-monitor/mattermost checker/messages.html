@@ -1,0 +1,186 @@
+<html><head><meta charset='utf-8'>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    font-size:14px;
+    background:#ffffff;   /* nền trắng tổng thể */
+    margin:20px;
+}
+.container {max-width:1000px; margin:0 auto; height:auto;}
+.msg {
+    margin:12px 0;
+    padding:12px 14px;
+    border:1px solid #d0e3f0;
+    border-radius:8px;
+    background:#eaf4fc;   /* xanh nhạt mặc định */
+    box-shadow:0 1px 2px rgba(0,0,0,0.05);
+    overflow:hidden;      /* CHỐNG TRÀN mép khung */
+}
+.msg:nth-child(even){background:#f0f8ff;}  /* xanh nhạt xen kẽ */
+
+.msg.mention {
+    background:#fff4e5;   /* cam nhạt khi có mention */
+    border:1px solid #f5c890;
+}
+
+.timestamp {color:#666; font-size:12px; margin-bottom:6px;}
+.sender {font-weight:600; color:#0b8043;}
+.channel {color:#3367d6; font-style:italic;}
+.content {
+    margin-top:6px;
+    color:#111;
+    line-height:1.4;
+    white-space:normal;
+    word-wrap:break-word;   /* hỗ trợ trình duyệt cũ */
+    overflow-wrap:anywhere; /* bẻ dòng chuỗi dài, URL */
+    word-break:break-word;  /* fallback thêm */
+}
+.content a {
+    overflow-wrap:anywhere;
+    word-break:break-word;
+}
+
+pre, code {
+    white-space: pre-wrap;  /* bẻ dòng trong code */
+    overflow-wrap:anywhere;
+    word-break:break-word;
+}
+
+.translated {
+    margin-top:8px;
+    padding-left:12px;
+    border-left:3px solid #eee;
+    font-style:italic;
+    color:#555;
+    white-space:normal;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+}
+</style></head><body><div class="container">
+<div class='msg mention'><div class='timestamp'>[2025-08-28 23:44:14]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+hello Long</p></div><div class='translated'><p>🔁 Chào Long</p></div></div>
+<div class='msg '><div class='timestamp'>[2025-08-28 23:44:46]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@channel 
+そして直ちにイ大統領との日韓首脳会談に臨み、同席者を限定した少人数の会合を経て拡大会合を行いました。
+この中で両首脳は1965年の日韓国交正常化以来築かれてきた基盤に基づき、両国の関係を安定的に大きく発展させていくことで一致しました。</p>
+<p>また安全保障分野では両国の戦略的な意思疎通を強化していくことで一致し、外務次官による戦略対話の早期開催や防衛当局間の対話の枠組みも活用していくことを申し合わせました。</p></div><div class='translated'><p>🔁 @channel</p>
+<p>Sau đó, Tổng thống [tên] lập tức tiến hành cuộc gặp thượng đỉnh Hàn - Nhật với Tổng thống Lee, bắt đầu bằng một cuộc họp hẹp với số lượng người tham dự hạn chế, sau đó là cuộc họp mở rộng.</p>
+<p>Trong cuộc họp này, hai nhà lãnh đạo đã nhất trí rằng, dựa trên nền tảng đã được xây dựng kể từ khi bình thường hóa quan hệ ngoại giao Hàn - Nhật năm 1965, sẽ phát triển mối quan hệ giữa hai nước một cách ổn định và mạnh mẽ.</p>
+<p>Ngoài ra, trong lĩnh vực an ninh, hai bên nhất trí tăng cường sự hiểu biết và giao tiếp chiến lược, đồng thời thỏa thuận tổ chức sớm cuộc đối thoại chiến lược giữa các Thứ trưởng Ngoại giao và tận dụng các khuôn khổ đối thoại giữa các cơ quan quốc phòng.</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-28 23:58:50]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+Hey Long</p></div><div class='translated'><p>🔁 Chào Long.</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 00:00:18]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+Hey</p></div><div class='translated'><p>🔁 Chào bạn @lpham</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 00:05:27]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+Hey Long</p></div><div class='translated'><p>🔁 Chào Long</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 00:05:50]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+how are u</p></div><div class='translated'><p>🔁 @lpham, bạn khỏe không?</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 00:13:26]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+Hi Thuong</p></div><div class='translated'><p>🔁 Chào Thương,</p>
+<p>(Từ &quot;lpham&quot; có thể là tên người dùng hoặc một định danh nào đó, nên tôi giữ nguyên.)</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 00:14:06]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+Hello Thuong</p></div><div class='translated'><p>🔁 Chào Thượng</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 00:15:40]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+Hi Long</p></div><div class='translated'><p>🔁 Chào Long,</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 22:55:20]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+that great</p></div><div class='translated'><p>🔁 Tuyệt vời!</p></div></div>
+<div class='msg '><div class='timestamp'>[2025-08-29 23:00:54]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@channel 
+nice to meet you</p></div><div class='translated'><p>🔁 @channel (giữ nguyên)
+rất vui được gặp bạn</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 23:01:20]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+hi you</p></div><div class='translated'><p>🔁 @lpham, chào bạn.</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 23:03:32]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+love you</p></div><div class='translated'><p>🔁 @lpham, yêu bạn.</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 23:09:31]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+great</p></div><div class='translated'><p>🔁 Tuyệt vời.</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 23:26:35]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+test</p></div><div class='translated'><p>🔁 @lpham 
+kiểm tra</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 23:31:35]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+test</p></div><div class='translated'><p>🔁 @lpham 
+kiểm tra</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 23:38:38]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+test</p></div><div class='translated'><p>🔁 @lpham
+kiểm tra</p></div></div>
+<div class='msg '><div class='timestamp'>[2025-08-29 23:39:04]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@channel 
+nice to meet u</p></div><div class='translated'><p>🔁 @channel: @kênh
+nice to meet u: Rất vui được gặp bạn.</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 23:39:23]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+hi mom</p></div><div class='translated'><p>🔁 Mẹ yêu ơi (hoặc Mẹ kính yêu).</p></div></div>
+<div class='msg '><div class='timestamp'>[2025-08-29 23:42:29]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>me neither</p></div><div class='translated'><p>🔁 &quot;Me neither&quot; có nghĩa là &quot;tôi cũng không&quot; hoặc &quot;tôi cũng vậy&quot; (theo hướng phủ định).</p>
+<p>Ví dụ:</p>
+<ul>
+<li>A: I don&#x27;t like coffee. (Tôi không thích cà phê.)</li>
+<li>B: Me neither. (Tôi cũng không.)</li>
+</ul>
+<p>Tùy ngữ cảnh mà có thể dịch linh hoạt hơn một chút để tự nhiên hơn.</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 23:43:01]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+would uou like to eat?</p></div><div class='translated'><p>🔁 Bạn có muốn ăn gì không?</p></div></div>
+<div class='msg '><div class='timestamp'>[2025-08-29 23:43:29]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>i whould like ramen</p></div><div class='translated'><p>🔁 Tôi muốn ăn ramen.</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 23:43:46]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+you are tall</p></div><div class='translated'><p>🔁 @lpham, bạn cao.</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 23:46:32]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+test</p></div><div class='translated'><p>🔁 @lpham
+kiểm tra</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 23:46:54]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+mention</p></div><div class='translated'><p>🔁 @lpham
+nhắc đến</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-29 23:56:08]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+would you like coffie or drink</p></div><div class='translated'><p>🔁 @lpham, bạn muốn uống cà phê hay đồ uống gì khác?</p></div></div>
+<div class='msg '><div class='timestamp'>[2025-08-29 23:56:46]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@channel 
+hello everybody</p></div><div class='translated'><p>🔁 @channel 
+Xin chào mọi người!</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 00:05:57]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+HI long</p></div><div class='translated'><p>🔁 @lpham, xin chào.</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 00:07:36]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+hello world</p></div><div class='translated'><p>🔁 Chào thế giới</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 00:24:33]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+hi long</p></div><div class='translated'><p>🔁 @lpham, hi long</p>
+<p>(Giữ nguyên như vậy vì đây có thể là một tên người dùng và một lời chào/tên riêng.)</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 00:24:54]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+Hi channel</p></div><div class='translated'><p>🔁 @lpham 
+Chào kênh</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 00:25:36]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+im sad</p></div><div class='translated'><p>🔁 Tôi buồn.</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 00:33:38]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+Hi fun Long</p></div><div class='translated'><p>🔁 Chào Long vui tính!</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 00:43:21]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+Hello Long</p></div><div class='translated'><p>🔁 Chào Long</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 00:49:39]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+Hi Long</p></div><div class='translated'><p>🔁 @lpham 
+Chào Long</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 00:50:03]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+Hi Long</p></div><div class='translated'><p>🔁 Chào Long.</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 12:52:29]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+long</p></div><div class='translated'><p>🔁 @lpham long</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 12:55:58]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+Long hi</p></div><div class='translated'><p>🔁 Dịch sang tiếng Việt, giữ nguyên ý nghĩa: @lpham 
+Long Hi</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 12:59:21]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+Hello Long</p></div><div class='translated'><p>🔁 Chào Long</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 22:20:35]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+Hello World</p></div><div class='translated'><p>🔁 @lpham Xin chào thế giới</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 22:41:10]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+long </p></div><div class='translated'><p>🔁 @lpham long</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 22:44:50]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+Hi Long</p></div><div class='translated'><p>🔁 Chào Long.</p></div></div>
+<div class='msg '><div class='timestamp'>[2025-08-31 22:45:11]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@channel 
+Long</p></div><div class='translated'><p>🔁 @channel Long</p>
+<p>(Có thể dịch thành)</p>
+<p>@kênh Long</p>
+<p>Hoặc giữ nguyên:</p>
+<p>@channel Long</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 22:47:26]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+Whould you like to eat?</p></div><div class='translated'><p>🔁 Bạn muốn ăn gì không?</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 22:48:42]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+こんにちはLong</p></div><div class='translated'><p>🔁 Chào bạn Long.</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 23:34:26]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+long</p></div><div class='translated'><p>🔁 @lpham long</p></div></div>
+<div class='msg mention'><div class='timestamp'>[2025-08-31 23:35:07]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@lpham 
+Hello World</p></div><div class='translated'><p>🔁 Chào thế giới.</p></div></div>
+<div class='msg '><div class='timestamp'>[2025-08-31 23:35:49]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@channel<br />
+hi fun long</p></div><div class='translated'><p>🔁 @channel hi fun long</p>
+<p>Dịch sang tiếng Việt:</p>
+<p>@channel chào fun long</p></div></div>
+<div class='msg '><div class='timestamp'>[2025-08-31 23:36:32]</div><div><span class='sender'>7s7bbn9m8i89je3p6n1tx3gukw</span> in <span class='channel'>LPham / testMT</span></div><div class='content'><p>@channel 
+would you like coffie or drink</p></div><div class='translated'><p>🔁 @channel mọi người muốn cà phê hay đồ uống gì khác ạ?</p></div></div>
+</div></body></html>

@@ -1,0 +1,48 @@
+{
+  "SERVER_URL": "http://localhost:8065",
+  "WS_URL": "ws://localhost:8065/api/v4/websocket",
+  "MMUSERID": "7s7bbn9m8i89je3p6n1tx3gukw",
+  "MMAUTHTOKEN": "jrgcsd9r9frijf4q6w7dopux3w",
+  "MY_USERNAME": "lpham",
+  "WATCH_CHANNELS": [
+    "w4ejrmpte3yi5gx53wf83oda3c",
+    "nuexep7yajf3um7q96tsucjtha"
+  ],
+  "_comment": {
+    "w4ejrmpte3yi5gx53wf83oda3c": "LPham / testMT",
+    "nuexep7yajf3um7q96tsucjtha": "LPham / 開発4課"
+  },
+  "USER_MAP": {
+    "435y3rbnh78cjkm5dzfeh43eww": "yasuhiro.takahashi",
+    "z1664b37xb8ppr48qxzrybqujh": "Ishii",
+    "cue41cmtybnubxuzfetoegyxqe": "longPham",
+    "84c8k89tz7f1d8rxkcn3u94rjw": "Nagata",
+    "j9fbfm793fftxcyd9d7ak4nfre": "Hanh",
+    "jxkoaocnrbbmxgups4omw4wxka": "Chung",
+    "kikdgw8chb8p8yajw1833s6ixe": "Son(A)",
+    "sm155tu6nff9xn8iecogoeowdc": "Son(Emu)",
+    "dbezy1mqm3nn8fxjn9qg6zk4wy": "Mao",
+    "7yf9arjrq7gd5dfpz8hj4ckfdc": "shohei.ogawa",
+    "994j9oshrjn1mncrpgq58jc6ky": "DVLoc",
+    "i3j7xmea5jnu7jj6aqy43tqhje": "Kusuma",
+    "r6rod1bnri8h9b1mpufsnrufzh": "tomoya.suwa",
+    "asqdpu6cz7fndgnug6uzxx16co": "Thuy(BrSE)",
+    "b4irnj35itb9fyy5wzdeu5qkay": "hiroshi.matsuzawa",
+    "tw74qn9ihbrxbcb6gp9c5s8w6o": "naoto.wataya",
+    "dy1gfewk77na98ajkcrggk13xc": "masafumi.kawamura",
+    "ag6pzuuxjtb7tjzrdyyb5qecyy": "hikaru.imamoto",
+    "cpb9z6h9n3ngp8schkc3wt7pue": "takuya.aramaki",
+    "8sgor3dy1tn7tc9wpo1heeqgtc": "tomoko.ogino",
+    "pi74bhbp3jfdicodpz3g3jo7hh": "r.okamoto",
+    "ghonunhub3n6pmoe5roa8bbnne": "f.ganesha",
+    "picgbtg333rdmczcmjxoeq4moa": "Naohiro.Ohira",
+    "njz5mpeosbrwzp83xmc4c4p96w": "Shun.takeda",
+    "p5e9zbmbd3g1tdwpmmkr56i89r": "Hikaru.Sakata",
+    "644uojzepp88jpbj5wf4ga7goa": "hiroaki.saito"
+  },
+  "API_KEY": "AIzaSyBMFbvl0poru2Xs1mUZfhrlhuYisItGiqQ",
+  "GEMINI_URL": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+  "MAX_LOG_ENTRIES": 1000,
+  "HTML_LOG": "messages.html",
+  "META_REFRESH_SECONDS": 5
+}
