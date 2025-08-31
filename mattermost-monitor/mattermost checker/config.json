@@ -40,7 +40,7 @@
     "p5e9zbmbd3g1tdwpmmkr56i89r": "Hikaru.Sakata",
     "644uojzepp88jpbj5wf4ga7goa": "hiroaki.saito"
   },
-  "API_KEY": "AIzaSyBMFbvl0poru2Xs1mUZfhrlhuYisItGiqQ",
+  "API_KEY": "AIzaSyBMFbvl0poru2Xs1mUZfhrlhuYisIt****",
   "GEMINI_URL": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
   "MAX_LOG_ENTRIES": 1000,
   "HTML_LOG": "messages.html",
