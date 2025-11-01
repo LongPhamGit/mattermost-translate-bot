@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 from pathlib import Path
 
@@ -16,7 +17,29 @@ def _resolve_config_path() -> Path:
     if env_path:
         candidates.append(Path(env_path).expanduser())
 
+    # When packaged with PyInstaller, resources may live next to the
+    # executable or inside the temporary extraction directory (_MEIPASS).
+    executable_dir = None
+    if getattr(sys, "frozen", False):
+        try:
+            executable_dir = Path(sys.executable).resolve().parent
+        except Exception:
+            executable_dir = None
+    if executable_dir:
+        candidates.append(executable_dir / "config.json")
+
+    meipass = getattr(sys, "_MEIPASS", None)
+    if meipass:
+        candidates.append(Path(meipass) / "config.json")
+
     candidates.append(Path.cwd() / "config.json")
+
+    try:
+        argv_path = Path(sys.argv[0]).resolve()
+    except Exception:
+        argv_path = None
+    if argv_path:
+        candidates.append(argv_path.parent / "config.json")
     candidates.append(_module_dir / "config.json")
 
     for path in candidates:
