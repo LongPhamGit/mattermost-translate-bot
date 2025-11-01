@@ -1,10 +1,61 @@
-import os, json
+import os
+import sys
+import json
+from pathlib import Path
 
-CONFIG_FILE = "config.json"
-if not os.path.exists(CONFIG_FILE):
-    raise SystemExit(f"Missing {CONFIG_FILE} in current folder.")
 
-with open(CONFIG_FILE, "r", encoding="utf-8") as f:
+CONFIG_ENV_VAR = "MATTERMOST_TRANSLATE_CONFIG"
+_module_dir = Path(__file__).resolve().parent
+
+
+def _resolve_config_path() -> Path:
+    """Locate the configuration file with a few sensible fallbacks."""
+
+    candidates = []
+
+    env_path = os.environ.get(CONFIG_ENV_VAR)
+    if env_path:
+        candidates.append(Path(env_path).expanduser())
+
+    # When packaged with PyInstaller, resources may live next to the
+    # executable or inside the temporary extraction directory (_MEIPASS).
+    executable_dir = None
+    if getattr(sys, "frozen", False):
+        try:
+            executable_dir = Path(sys.executable).resolve().parent
+        except Exception:
+            executable_dir = None
+    if executable_dir:
+        candidates.append(executable_dir / "config.json")
+
+    meipass = getattr(sys, "_MEIPASS", None)
+    if meipass:
+        candidates.append(Path(meipass) / "config.json")
+
+    candidates.append(Path.cwd() / "config.json")
+
+    try:
+        argv_path = Path(sys.argv[0]).resolve()
+    except Exception:
+        argv_path = None
+    if argv_path:
+        candidates.append(argv_path.parent / "config.json")
+    candidates.append(_module_dir / "config.json")
+
+    for path in candidates:
+        if path and path.exists():
+            return path
+
+    searched = ", ".join(str(p) for p in candidates if p)
+    raise SystemExit(
+        f"Missing config.json. Set {CONFIG_ENV_VAR} to the config file location. "
+        f"Searched: {searched}"
+    )
+
+
+CONFIG_FILE = _resolve_config_path()
+
+with CONFIG_FILE.open("r", encoding="utf-8") as f:
     config = json.load(f)
 
 SERVER_URL      = config.get("SERVER_URL", "http://localhost:8065")
