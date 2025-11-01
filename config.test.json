@@ -1,0 +1,12 @@
+{
+    "SERVER_URL": "http://localhost:8065",
+    "WS_URL": "ws://localhost:8065/api/v4/websocket",
+    "MMUSERID": "",
+    "MMAUTHTOKEN": "",
+    "MY_USERNAME": "test-user",
+    "WATCH_CHANNELS": [],
+    "USER_MAP": {},
+    "API_KEY": "",
+    "GEMINI_URL": "",
+    "HTML_LOG": "messages.html"
+}
