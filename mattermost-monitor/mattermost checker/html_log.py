@@ -18,7 +18,13 @@ body {
     background:#ffffff;   /* nền trắng tổng thể */
     margin:20px;
 }
-.container {max-width:1000px; margin:0 auto; height:auto;}
+/* Container hiển thị theo flow bình thường (trên -> dưới) */
+.container {
+    max-width:1000px;
+    margin:0 auto;
+    height:auto;
+}
+
 .msg {
     margin:12px 0;
     padding:12px 14px;
@@ -111,7 +117,7 @@ def rotate_html_log_if_needed():
 
 
 def append_html(sender, channel_name, text, css_class="normal", translated=""):
-    """Thêm một entry mới vào log HTML"""
+    """Thêm một entry mới vào log HTML (ghi cũ->mới như trước)"""
     rotate_html_log_if_needed()
     safe_text = html_lib.escape(text or "")
     safe_trans = html_lib.escape(translated or "")
