@@ -1,0 +1,55 @@
+{
+  "SERVER_URL": "https://mattermost01.***.mdomain",
+  "WS_URL": "wss://mattermost01.***.mdomain/api/v4/websocket",
+  "MMUSERID": "cue41cmtybnubxuzfetoegy***",
+  "MMAUTHTOKEN": "869fsqgampd3fc6iuwketn8***",
+  "MY_USERNAME": "pnblong",
+  "WATCH_CHANNELS": [
+    "teyehqtsstfhtqk7uyz3ob338o",
+    "yda65ui3ufyi8btpcpfwasrigh",
+    "biey5zmkdiymbf44b9g15i5w1c",
+    "dzbnz4r47fd3djpgu68dgcbcco",
+    "3chi94wy8pnrjmsunyca6g6eyr",
+    "7qz4f3em578bxp4wxfy9aopo3w",
+    "g7twkk774t86zcxqhshszghoxa",
+    "sd8j5xedk3y19k4344kyg49o1h",
+    "r5fhzecxdjdquqcj5g3zn8uury"
+  ],
+  "_comment": {
+    "teyehqtsstfhtqk7uyz3ob338o": "CL-DEV / [RSS]UI統一",
+    "yda65ui3ufyi8btpcpfwasrigh": "CL-DEV / LongTestAI",
+    "biey5zmkdiymbf44b9g15i5w1c": "CL-DEV / RKS+RSD QA・Info Sharing",
+    "dzbnz4r47fd3djpgu68dgcbcco": "CL-DEV / R精算_楽楽シリーズUI統一",
+    "3chi94wy8pnrjmsunyca6g6eyr": "CL-DEV / R精算-QA＋BSE",
+    "7qz4f3em578bxp4wxfy9aopo3w": "CL-DEV / R精算-オフショア開発（精算開発4課）",
+    "g7twkk774t86zcxqhshszghoxa": "CL-DEV / R精算開発部-全員",
+    "sd8j5xedk3y19k4344kyg49o1h": "CL-DEV / Tech Cafe",
+    "r5fhzecxdjdquqcj5g3zn8uury": "CL-DEV / 開発Tm⇔BrSE（RV担当）"
+  },
+  "USER_MAP": {
+    "435y3rbnh78cjkm5dzfeh43eww": "yasuhiro.takahashi",
+    "z1664b37xb8ppr48qxzrybqujh": "Ishii",
+    "cue41cmtybnubxuzfetoegyxqe": "longPham",
+    "84c8k89tz7f1d8rxkcn3u94rjw": "Nagata",
+    "j9fbfm793fftxcyd9d7ak4nfre": "Hanh",
+	"jxkoaocnrbbmxgups4omw4wxka": "Chung",
+	"kikdgw8chb8p8yajw1833s6ixe": "Son(A)",
+    "dbezy1mqm3nn8fxjn9qg6zk4wy": "Mao",
+    "7yf9arjrq7gd5dfpz8hj4ckfdc": "shohei.ogawa",
+    "994j9oshrjn1mncrpgq58jc6ky": "DVLoc",
+    "i3j7xmea5jnu7jj6aqy43tqhje": "Kusuma",
+    "r6rod1bnri8h9b1mpufsnrufzh": "tomoya.suwa",
+    "asqdpu6cz7fndgnug6uzxx16co": "Thuy(BrSE)",
+    "b4irnj35itb9fyy5wzdeu5qkay": "hiroshi.matsuzawa",
+	"tw74qn9ihbrxbcb6gp9c5s8w6o": "naoto.wataya",
+	"dy1gfewk77na98ajkcrggk13xc": "masafumi.kawamura",
+	"ag6pzuuxjtb7tjzrdyyb5qecyy": "hikaru.imamoto",
+    "644uojzepp88jpbj5wf4ga7goa": "hiroaki.saito"
+  },
+  "API_KEY": "AIzaSyBMFbvl0poru2Xs1mUZfhrlhuYisItG***",
+  "GEMINI_URL": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+  "MAX_LOG_ENTRIES": 1000,
+  "HTML_LOG": "messages.html",
+  "META_REFRESH_SECONDS": 5
+
+}
