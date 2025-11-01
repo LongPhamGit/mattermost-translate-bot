@@ -141,19 +141,40 @@ def main():
             win.show()
         win.raise_()
         win.activateWindow()
+        try:
+            app.processEvents()
+        except Exception:
+            pass
 
     # Nhận ACTIVATE từ instance mới (nếu có)
     if single_server is not None:
         def _on_new_connection():
+            # Hiển thị cửa sổ ngay khi nhận được kết nối để giảm độ trễ
+            show_main_window()
             try:
                 conn = single_server.nextPendingConnection()
-                if conn is not None:
-                    conn.waitForReadyRead(50)
-                    conn.readAll()
-                    conn.close()
             except Exception:
-                pass
-            show_main_window()
+                conn = None
+
+            if conn is not None:
+                try:
+                    # Đọc dữ liệu nếu có nhưng chỉ đợi trong thời gian rất ngắn
+                    if not conn.bytesAvailable():
+                        conn.waitForReadyRead(5)
+                    if conn.bytesAvailable():
+                        conn.readAll()
+                except Exception:
+                    pass
+                finally:
+                    try:
+                        conn.close()
+                    except Exception:
+                        pass
+                    try:
+                        conn.deleteLater()
+                    except Exception:
+                        pass
+
             try:
                 flash_taskbar(win)
             except Exception:
