@@ -1,6 +1,6 @@
 # Mattermost Translator Bot
 
-Bot Flask đơn giản giúp dịch tin nhắn có mention `@pnblong` trong Mattermost sang tiếng Việt, ghi vào file log dưới dạng hội thoại và tự động mở log.
+Bot MatterMost giúp kết nối với Gemini API, dịch tin nhắn có mention chỉ định sang tiếng Việt, English or Japanese, ghi vào file log dưới dạng hội thoại và tự động mở log.
 
 ## Cài đặt
 
@@ -25,7 +25,7 @@ Tạo Outgoing Webhook với:
 
 Mỗi lần có tin nhắn được xử lý, nội dung sẽ được lưu vào `dialogue_log.txt` với định dạng đối thoại.
 
-## Chạy như Windows Background Service (xem thêm bên dưới từ ChatGPT)
+## Chạy như Windows Background Service
 
 ## Đóng gói thành file `.exe`
 
